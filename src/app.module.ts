@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CatModule } from './cat/cat.module';
+import { chatGateway } from './chat.gateway';
 
 @Module({
   imports: [
@@ -12,6 +13,6 @@ import { CatModule } from './cat/cat.module';
     CatModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, chatGateway],
 })
 export class AppModule {}
