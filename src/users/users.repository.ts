@@ -8,6 +8,15 @@ import { User, UserDocument } from "./schemas/users.schema";
 export class UsersRepository {
     constructor(@InjectModel("us") private usersModel: Model<UserDocument>) {}
 
+    async findOne(by: string) {
+        return this.usersModel.findOne({
+            $or: [
+                {username: by},
+                {email: by}
+            ]
+        })
+    }
+
     async create(data: CreateUserDto) {
         return await this.usersModel.create(data)
     }
