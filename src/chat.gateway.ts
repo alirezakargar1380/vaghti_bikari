@@ -34,9 +34,9 @@ export class chatGateway {
     @SubscribeMessage('message')
     async handleMessage(@MessageBody() message: string) {
         console.log("CALLED")
-        // if ()
+        let slowSpeed
 
-        setInterval( async (speed = "slow", coor = { x: 5, y: 1 }) => {
+        slowSpeed = setInterval( async (speed = "slow", coor = { x: 5, y: 1 }) => {
             const ss = await this.cacheManager.get("1")
             if (ss !== speed) return
 
@@ -65,6 +65,7 @@ export class chatGateway {
 
             console.log("i want to make speed slow")
             this.server.emit("message", currentCoor)
+            clearInterval(slowSpeed)
         }, 800)
 
         setInterval( async (speed = "fast") => {

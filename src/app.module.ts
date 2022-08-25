@@ -8,7 +8,7 @@ import * as redisStore from 'cache-manager-ioredis';
 // 
 import { CatModule } from './cat/cat.module';
 import { chatGateway } from './chat.gateway';
-import { battleGateway } from "./battle/battle.gateway";
+import { BattleModule } from "./battle/battle.module";
 // users
 import { UsersModule } from './users/users.module';
 
@@ -18,6 +18,7 @@ import { UsersModule } from './users/users.module';
     MongooseModule.forRoot('mongodb://localhost:27017/nest'),
     CatModule,
     UsersModule,
+    BattleModule,
     CacheModule.register({
       store: redisStore,
       socket: {
@@ -27,6 +28,6 @@ import { UsersModule } from './users/users.module';
     })
   ],
   controllers: [AppController],
-  providers: [AppService, chatGateway, battleGateway],
+  providers: [AppService, chatGateway],
 })
 export class AppModule {}
