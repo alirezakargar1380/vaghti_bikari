@@ -8,6 +8,7 @@ import * as redisStore from 'cache-manager-ioredis';
 // 
 import { CatModule } from './cat/cat.module';
 import { chatGateway } from './chat.gateway';
+import { battleGateway } from "./battle/battle.gateway";
 // users
 import { UsersModule } from './users/users.module';
 
@@ -26,6 +27,6 @@ import { UsersModule } from './users/users.module';
     })
   ],
   controllers: [AppController],
-  providers: [AppService, chatGateway],
+  providers: [AppService, chatGateway, battleGateway],
 })
 export class AppModule {}

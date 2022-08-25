@@ -1,19 +1,7 @@
 import { MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
-import { CACHE_MANAGER, Inject, Injectable } from "@nestjs/common";
+import { CACHE_MANAGER, Inject } from "@nestjs/common";
 import { Cache } from "cache-manager";
-
-class test {
-    public test;
-    constructor() {
-        this.test = true
-    }
-
-    testF() {
-        console.log("pass test")
-    }
-}
-
-
+import { AppService } from './app.service';
 
 @WebSocketGateway({
     allowEIO3: true,
@@ -23,13 +11,20 @@ class test {
     },
 })
 export class chatGateway {
-    constructor(@Inject(CACHE_MANAGER) private readonly cacheManager: Cache) { 
+    constructor(
+        @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
+        private readonly appService: AppService
+        ) { 
         // console.log("set default speed")
         this.cacheManager.set("1", "slow", {
             ttl: 1000 * 60 * 60
         })
 
-        this.cacheManager.set("coor", JSON.stringify({x: 5, y: 1}), {
+        this.cacheManager.set("coor", JSON.stringify({
+            x: 5,
+            y: 1,
+            date: new Date()
+        }), {
             ttl: 1000 * 60 * 60
         })
     }
@@ -39,12 +34,14 @@ export class chatGateway {
     @SubscribeMessage('message')
     async handleMessage(@MessageBody() message: string) {
         console.log("CALLED")
+        // if ()
 
         setInterval( async (speed = "slow", coor = { x: 5, y: 1 }) => {
             const ss = await this.cacheManager.get("1")
             if (ss !== speed) return
 
             const currentCoor: any = JSON.parse(await this.cacheManager.get("coor"))
+            currentCoor.called = true
             if (!currentCoor) {
                 currentCoor.x = 5,
                 currentCoor.y = 1
@@ -54,6 +51,13 @@ export class chatGateway {
             }
 
             if (currentCoor.y > 19) currentCoor.y = 2
+
+            console.log(new Date(currentCoor.date))
+            const endDate: any = new Date()
+            const startDate: any = new Date(currentCoor.date)
+            console.log(Math.round(
+                Math.abs(endDate - startDate) / 1000
+            ))
 
             this.cacheManager.set("coor", JSON.stringify(currentCoor), {
                 ttl: 1000 * 60 * 60
