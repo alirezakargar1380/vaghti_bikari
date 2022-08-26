@@ -31,3 +31,50 @@ import { UsersModule } from './users/users.module';
   providers: [AppService, chatGateway],
 })
 export class AppModule {}
+
+const home_are_fill = [
+  {
+    x: 1,
+    y: 20
+  },
+  {
+    x: 2,
+    y: 20
+  },
+  {
+    x: 3,
+    y: 20
+  },
+  {
+    x: 4,
+    y: 20
+  },
+  {
+    x: 5,
+    y: 20
+  },
+]
+console.log(home_are_fill)
+function checkIsCompleteAHomeOrNot() {
+  let rowLength = 5
+  let fillRowNum = 0
+  let fillRows: number[] = []
+  for (let r = 1; r <= 20; r++) {
+    fillRowNum = 0
+    home_are_fill.forEach(({ x, y }) => {
+      if (r === y) {
+        fillRowNum++
+      }
+    })
+    console.log(fillRowNum)
+    if (rowLength === fillRowNum) {
+      fillRows.push(r)
+    }
+  }
+
+  return fillRows
+}
+
+
+
+checkIsCompleteAHomeOrNot()
