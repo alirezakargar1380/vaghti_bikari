@@ -22,8 +22,6 @@ export class FallenCubesService {
             x: 2,
             y: 2
         }
-
-        this.direction.top
     }
 
     getShapePoints(shapeName, stepByRotation, lastStartPoint, r) {

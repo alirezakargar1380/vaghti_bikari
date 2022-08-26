@@ -23,8 +23,8 @@ export class chatGateway {
                 rotations: {
                     "topRight": false,
                     "downRight": false,
-                    "downLeft": true,
-                    "topLeft": false
+                    "downLeft": false,
+                    "topLeft": true
                 }
             },
             "T": {
@@ -39,10 +39,10 @@ export class chatGateway {
             "LT": {
                 name: "LT",
                 rotations: {
-                    "top": "top",
-                    "right": "right",
-                    "down": "down",
-                    "left": "left"
+                    "top": false,
+                    "right": true,
+                    "down": false,
+                    "left": false
                 }
             },
             "ZL": {
@@ -67,10 +67,11 @@ export class chatGateway {
         })
 
         this.cacheManager.set("coor", JSON.stringify({
-            x: 5,
+            x: 2,
             y: 2,
             date: new Date(),
-            filledHome: []
+            filledHome: [],
+            filled: []
         }), {
             ttl: 1000 * 60 * 60
         })
@@ -87,35 +88,44 @@ export class chatGateway {
         console.log("CALLED")
         let slowSpeed
 
-        slowSpeed = setInterval(async (speed = "slow", coor = { x: 5, y: 2 }) => {
+        slowSpeed = setInterval(async (speed = "slow", coor = { x: 2, y: 2 }) => {
             const ss = await this.cacheManager.get("1")
             if (ss !== speed) return
 
-            const currentCoor: any = JSON.parse(await this.cacheManager.get("coor"))
+            let currentCoor: any = JSON.parse(await this.cacheManager.get("coor"))
 
-            const currentRotationName = this.fallenCubesServiceService.getCurrentShapeRotaion(this.shapes.L.rotations)
-            // console.log(this.fallenCubesServiceService.getShapePoints(this.shapes.L.name, 2, currentCoor, currentRotationName))
-            
+            const currentRotationName = this.fallenCubesServiceService.getCurrentShapeRotaion(this.shapes.LT.rotations)
+            currentCoor.filledHome = this.fallenCubesServiceService.getShapePoints(this.shapes.LT.name, 2, currentCoor, currentRotationName)
+
+            // console.log()
+
             currentCoor.called = true
             if (!currentCoor) {
-                currentCoor.x = 5,
-                currentCoor.y = 2
+                currentCoor = coor
             } else {
-                currentCoor.x = 5,
                 currentCoor.y++
             }
 
             if (currentCoor.y > 19) {
-                currentCoor.y = 2
+                // reset
+                
                 // get filled homes
                 currentCoor.y--
-                console.log(this.fallenCubesServiceService.getShapePoints(this.shapes.L.name, 2, 
+                this.fallenCubesServiceService.getShapePoints(this.shapes.LT.name, 2,
                     {
                         x: currentCoor.x,
                         y: 19
-                    }, currentRotationName))
+                    }, currentRotationName).forEach((items) => {
+                        currentCoor.filled.push(items)
+                    })
+
+                console.log(currentCoor.filled)
+
+
+                currentCoor.y = 2
+                currentCoor.x = 2
             }
-            
+
             // check if shape come here shape points not filled cubes 
 
             // ======================================================== GET SECONDS
@@ -164,5 +174,19 @@ export class chatGateway {
         this.cacheManager.set("1", message, {
             ttl: 1000 * 60 * 60
         })
+    }
+
+    @SubscribeMessage("right")
+    async goRight() {
+        const currentCoor: any = JSON.parse(await this.cacheManager.get("coor"))
+        currentCoor.x++
+        this.cacheManager.set("coor", JSON.stringify(currentCoor), {
+            ttl: 1000 * 60 * 60
+        })
+
+        const currentRotationName = this.fallenCubesServiceService.getCurrentShapeRotaion(this.shapes.LT.rotations)
+        currentCoor.filledHome = this.fallenCubesServiceService.getShapePoints(this.shapes.LT.name, 2, currentCoor, currentRotationName)
+
+        this.server.emit("message", currentCoor)
     }
 }
