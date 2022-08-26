@@ -11,6 +11,7 @@ import { chatGateway } from './chat.gateway';
 import { BattleModule } from "./battle/battle.module";
 // users
 import { UsersModule } from './users/users.module';
+import { FallenCubesService } from './fallen_cubes/fallen_cubes.service';
 
 @Module({
   imports: [
@@ -28,7 +29,7 @@ import { UsersModule } from './users/users.module';
     })
   ],
   controllers: [AppController],
-  providers: [AppService, chatGateway],
+  providers: [AppService, chatGateway, FallenCubesService],
 })
 export class AppModule {}
 
@@ -54,27 +55,3 @@ const home_are_fill = [
     y: 20
   },
 ]
-console.log(home_are_fill)
-function checkIsCompleteAHomeOrNot() {
-  let rowLength = 5
-  let fillRowNum = 0
-  let fillRows: number[] = []
-  for (let r = 1; r <= 20; r++) {
-    fillRowNum = 0
-    home_are_fill.forEach(({ x, y }) => {
-      if (r === y) {
-        fillRowNum++
-      }
-    })
-    console.log(fillRowNum)
-    if (rowLength === fillRowNum) {
-      fillRows.push(r)
-    }
-  }
-
-  return fillRows
-}
-
-
-
-checkIsCompleteAHomeOrNot()
